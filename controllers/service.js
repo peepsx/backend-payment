@@ -1,6 +1,7 @@
 "use strict"
 const promise= require('promise');
-const config = require('../config')
+const config = require('../config');
+const { reject } = require('promise');
 const stripe = require('stripe')(config.Secret_Key);
 
 class Service{
@@ -18,26 +19,26 @@ class Service{
                     source: cardToken
                 },
                 function (err, customer) {
-                    if (customer) {
-                        resolve(customer)
-                    } else {
-                        reject(err)
-                    }
+                 customer ? resolve(customer) : resolve(JSON.parse(JSON.stringify(err)));
                 }
             );
         }).then(resultData => {
             return new promise((resolve, reject) => {
-                stripe.subscriptions.create(
-                    {
-                        customer: resultData.id,
-                        items: [
-                            { price: config.SUBSCRIPTION_PRICE },
-                        ],
-                    },
-                    function (err, subscription) {
-                    subscription ? resolve(subscription) : reject(err);
-                    }
-                );
+                if(resultData.id){
+                    stripe.subscriptions.create(
+                        {
+                            customer: resultData.id,
+                            items: [
+                                { price: config.SUBSCRIPTION_PRICE },
+                            ],
+                        },
+                        function (err, subscription) {
+                        subscription ? resolve(subscription) : reject(err);
+                        }
+                    );
+                }else{
+                 reject(resultData)
+                }
             })
         })
     }

@@ -27,7 +27,6 @@ class Users {
                         subscriptionStatus: resultData.status
                     });
                     userObject.save().then(doc => {
-                        console.log("=============doc", doc)
                         if (doc) {
                             res.json({ status: true, message: "Subscription created successfully."})
                         } else {
@@ -36,6 +35,14 @@ class Users {
                     }).catch((error) => {
                         res.json({ "status": false, "message": "Internal server error.", "data": error })
                     })
+                }).catch((error1)=>{
+                    if(error1.Error){
+                        res.status(501).json({status:false,message:error1.Error})
+                    }else if(error1.raw.message){
+                        res.status(501).json({status:false,message:error1.raw.message})
+                    }else{
+                        res.json({ "status": false, "message": "Internal server error.", "data": error })
+                    }
                 })
             }
         })
