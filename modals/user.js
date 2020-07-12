@@ -53,7 +53,7 @@ email:{
     unique:true,
     trim:true
 },
-stripeCustId:{
+paymentType:{
     type:String,
     default:null,
     trim:true

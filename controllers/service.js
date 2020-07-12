@@ -10,12 +10,12 @@ class Service{
 
 
 
-    createSubcription(userEmail, cardToken,) {
-        console.log("create subscription ================ ",userEmail,cardToken)
+    createSubcription(name, cardToken,) {
+        // console.log("create subscription ================ ",userEmail,cardToken)
         return new promise((resolve, reject) => {
             stripe.customers.create(
                 {
-                    email: userEmail,
+                    name: name,
                     source: cardToken
                 },
                 function (err, customer) {
