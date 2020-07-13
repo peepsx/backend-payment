@@ -2,6 +2,7 @@ const Userpayment = require('../modals/user')
 const config = require('../config')
 const stripe = require('stripe')(config.Secret_Key)
 const service = require('./service');
+const Payment = require('../modals/payment')
 // const sendgrid = require('@sendgrid/mail');
 // sendgrid.setApiKey(SENDGRID_API_KEY);
 
@@ -11,11 +12,30 @@ class Users {
     userpayment(req, res) {
         console.log("body", req.body);
         const { name, token } = req.body;
-        // console.log("res.body=========",res.body)
         service.createSubcription(name, token).then(resultData => {
             if (resultData) {
-                console.log("payment result data ============ >>>> ", resultData)
-                res.json({ status: true, message: "Payment successful.", data: resultData })
+                console.log("payment result data ============ >>>> ", resultData.id,resultData.created,'======',resultData)
+
+                Payment.find().then((response) => {
+                   
+                        let paymentObject = new Payment({
+                            name: name,
+                            token: token,
+                            subscriptionId:resultData.id,
+                            created:resultData.created
+                        })
+                        paymentObject.save().then((respData) => {
+                           console.log("saved");
+                           res.json({ status: true, message: "Payment successful.", data: resultData })
+
+                        }).catch((error) => {
+                            console.log(error)
+                        })
+                    
+                }).catch((error2) => {
+                    console.log(error2)
+                })
+
             }
         }).catch((error1) => {
             if (error1.Error) {
@@ -26,6 +46,9 @@ class Users {
                 res.json({ "status": false, "message": "Internal server error.", "data": error })
             }
         })
+
+
+
     }
 
     saveuser(req, res) {
