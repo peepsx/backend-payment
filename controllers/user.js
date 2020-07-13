@@ -2,6 +2,10 @@ const Userpayment = require('../modals/user')
 const config = require('../config')
 const stripe = require('stripe')(config.Secret_Key)
 const service = require('./service');
+// const sendgrid = require('@sendgrid/mail');
+// sendgrid.setApiKey(SENDGRID_API_KEY);
+
+
 
 class Users {
     userpayment(req, res) {
@@ -11,7 +15,7 @@ class Users {
         service.createSubcription(name, token).then(resultData => {
             if (resultData) {
                 console.log("payment result data ============ >>>> ", resultData)
-                res.json({ status: true, message: "Payment successful.",data:resultData })
+                res.json({ status: true, message: "Payment successful.", data: resultData })
             }
         }).catch((error1) => {
             if (error1.Error) {
@@ -28,36 +32,44 @@ class Users {
         const { fName, lName, addressOne, addressTwo, city, state, zipcode, country, phoneNo, email, paymenttype, subscriptionId, subscriptionStatus } = req.body
         Userpayment.findOne({ email: email }).then((resp) => {
             if (resp) {
-                console.log('=====================res',resp)
-                res.status(201).json({status:false,message:"User already exists"})
+                console.log('=====================res', resp)
+                res.status(201).json({ status: false, message: "User already exists" })
             } else {
-                console.log(resp, '=====================res =elsecase',req.body)
+                console.log(resp, '=====================res =elsecase', req.body)
                 let userObject = new Userpayment({
-                        fName: fName,
-                        lName: lName,
-                        addressOne: addressOne,
-                        addressTwo: addressTwo,
-                        city: city,
-                        state: state,
-                        zipcode: zipcode,
-                        country: country,
-                        phoneNo: phoneNo,
-                        email: email,
-                        paymentType: paymenttype,
-                        subscriptionId: subscriptionId,
-                        subscriptionStatus: subscriptionStatus
-                    });
-                    userObject.save().then(doc => {
-                        if (doc) {
-                            res.json({ status: true, message: "You are member now."})
-                        } else {
-                            res.json({ status: false, message: "You are not member,Please try again"})
-                        }
-                    }).catch((error) => {
-                        console.log(error)
-                        res.json({ "status": false, "message": "Internal server error.", "data": error })
-                    })
-        
+                    fName: fName,
+                    lName: lName,
+                    addressOne: addressOne,
+                    addressTwo: addressTwo,
+                    city: city,
+                    state: state,
+                    zipcode: zipcode,
+                    country: country,
+                    phoneNo: phoneNo,
+                    email: email,
+                    paymentType: paymenttype,
+                    subscriptionId: subscriptionId,
+                    subscriptionStatus: subscriptionStatus
+                });
+                userObject.save().then(doc => {
+                    if (doc) {
+                        res.json({ status: true, message: "You are member now." })
+                        // construct an email
+                        // const email = {
+                        //     to: 'test@mailslurp.com',
+                        //     from: 'test@mailslurp.com',
+                        //     subject: 'My first email',
+                        //     text: 'Hello world',
+                        // }
+                        // sendgrid.send(email)
+                    } else {
+                        res.json({ status: false, message: "You are not member,Please try again" })
+                    }
+                }).catch((error) => {
+                    console.log(error)
+                    res.json({ "status": false, "message": "Internal server error.", "data": error })
+                })
+
 
             }
         }).catch((err) => {
