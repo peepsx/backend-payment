@@ -3,6 +3,9 @@ const config = require('../config')
 const stripe = require('stripe')(config.Secret_Key)
 const service = require('./service');
 const Payment = require('../modals/payment')
+const Paypalpayment = require('../modals/paypalpayment')
+const { validationResult } = require('express-validator')
+
 // const sendgrid = require('@sendgrid/mail');
 // sendgrid.setApiKey(SENDGRID_API_KEY);
 
@@ -10,32 +13,35 @@ const Payment = require('../modals/payment')
 
 class Users {
     userpayment(req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            let message = errors.array().map(element => {
+                return element.msg
+            }).join(',')
+        }
         console.log("body", req.body);
         const { name, token } = req.body;
         service.createSubcription(name, token).then(resultData => {
             if (resultData) {
-                console.log("payment result data ============ >>>> ", resultData.id,resultData.created,'======',resultData)
-
+                console.log("payment result data ============ >>>> ", resultData.id, resultData.created, '======', resultData)
                 Payment.find().then((response) => {
-                   
-                        let paymentObject = new Payment({
-                            name: name,
-                            token: token,
-                            subscriptionId:resultData.id,
-                            created:resultData.created
-                        })
-                        paymentObject.save().then((respData) => {
-                           console.log("saved");
-                           res.json({ status: true, message: "Payment successful.", data: resultData })
+                    let paymentObject = new Payment({
+                        name: name,
+                        token: token,
+                        subscriptionId: resultData.id,
+                        created: resultData.created
+                    })
+                    paymentObject.save().then((respData) => {
+                        console.log("saved");
+                        res.json({ status: true, message: "Payment successful.", data: resultData })
 
-                        }).catch((error) => {
-                            console.log(error)
-                        })
-                    
+                    }).catch((error) => {
+                        console.log(error)
+                    })
+
                 }).catch((error2) => {
                     console.log(error2)
                 })
-
             }
         }).catch((error1) => {
             if (error1.Error) {
@@ -52,6 +58,12 @@ class Users {
     }
 
     saveuser(req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            let message = errors.array().map(element => {
+                return element.msg
+            }).join(',')
+        }
         const { fName, lName, addressOne, addressTwo, city, state, zipcode, country, phoneNo, email, paymenttype, subscriptionId, subscriptionStatus } = req.body
         Userpayment.findOne({ email: email }).then((resp) => {
             if (resp) {
@@ -92,13 +104,45 @@ class Users {
                     console.log(error)
                     res.json({ "status": false, "message": "Internal server error.", "data": error })
                 })
-
-
             }
         }).catch((err) => {
             console.log('=========', err)
         })
 
+    }
+
+    paypalpayment(req, res) {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            let message = errors.array().map(element => {
+                return element.msg
+            }).join(',')
+        }
+        const { orderID, billingToken, subscriptionID, facilitatorAccessToken, } = req.body
+        Paypalpayment.find()
+            .then((docs) => {
+                let paypalpaymentObj = new Paypalpayment({
+                    orderID: orderID,
+                    billingToken: billingToken,
+                    subscriptionID: subscriptionID,
+                    facilitatorAccessToken: facilitatorAccessToken
+                });
+                paypalpaymentObj.save()
+                    .then((docsResult) => {
+                        if (docsResult) {
+                            res.json({ status: true, message: 'Data saved successfully' })
+                        } else {
+                            res.json({ status: false, message: 'Data not saved,try again' })
+                        }
+                    })
+                    .catch((errs) => {
+                        console.log(errs)
+                    })
+
+            })
+            .catch((errors) => {
+                console.log(errors)
+            })
     }
 
 }

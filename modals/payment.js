@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const { text } = require('express');
 const Schema = mongoose.Schema;
 
 const paymentSchema = new Schema({
