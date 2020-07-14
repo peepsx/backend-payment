@@ -1,34 +1,151 @@
 const { check } = require('express-validator');
 
-class Validation{
-    validate(params){
-        switch(params){
+class Validation {
+
+    constructor() { }
+
+
+    validate(params) {
+        console.log('params=====>>>>>>>>',params)
+        switch (params) {
 
             case "stripePayment":
-                return[
+                return [
+                    check('name')
+                        .notEmpty()
+                        .withMessage('Enter Your name')
+                        .isString()
+                        .withMessage('Enter correct name')
+                        .trim(),
+                    check('token')
+                        .notEmpty()
+                        .withMessage('Enter Your stripe token')
+                        .isString()
+                        .withMessage('Enter correct stripe token')
+                        .trim(),
                     check('subscriptionId')
-                    .notEmpty()
-                    .withMessage('Enter subscriptionId name')
-                    .isString()
-                    .withMessage('Enter correct subscriptionId name')
-                    .trim(),
-                    
+                        .notEmpty()
+                        .withMessage('Enter subscriptionId ')
+                        .isString()
+                        .withMessage('Enter correct subscriptionId')
+                        .trim(),
+                    check('created')
+                        .notEmpty()
+                        .withMessage('Enter created')
+                        .trim(),
+
+
                 ]
 
-                case "paypalPayment":
-                return[
-                    check('productName')
-                    .notEmpty()
-                    .withMessage('Enter product name')
-                    .isString()
-                    .withMessage('Enter correct product name')
-                    .trim()
+            case "paypalPayment":
+                return [
+                    check('orderID')
+                        .notEmpty()
+                        .withMessage('Enter paypal orderID')
+                        .isString()
+                        .withMessage('Enter correct paypal orderID')
+                        .trim(),
+                    check('billingToken')
+                        .notEmpty()
+                        .withMessage('Enter paypal billingToken')
+                        .isString()
+                        .withMessage('Enter correct paypal billingToken')
+                        .trim(),
+                    check('subscriptionID')
+                        .notEmpty()
+                        .withMessage('Enter paypal subscriptionID')
+                        .isString()
+                        .withMessage('Enter correct paypal subscriptionID')
+                        .trim(),
+                    check('facilitatorAccessToken')
+                        .notEmpty()
+                        .withMessage('Enter paypal facilitatorAccessToken')
+                        .isString()
+                        .withMessage('Enter correct paypal facilitatorAccessToken')
+                        .trim()
                 ]
 
-                case "userDetails":
-                    return[
-                        check('')
-                    ]
+            case "userDetails":
+                return [
+                    check('fName')
+                        .notEmpty()
+                        .withMessage('Enter your first name')
+                        .isString()
+                        .withMessage('Enter correct first name')
+                        .trim(),
+                    check('lName')
+                        .notEmpty()
+                        .withMessage('Enter your last name')
+                        .isString()
+                        .withMessage('Enter correct last name')
+                        .trim(),
+                    check('addressOne')
+                        .notEmpty()
+                        .withMessage('Enter your first address')
+                        .isString()
+                        .withMessage('Enter correct first address')
+                        .trim(),
+                    check('addressTwo')
+                        .notEmpty()
+                        .withMessage('Enter your second address')
+                        .isString()
+                        .withMessage('Enter correct second address')
+                        .trim(),
+                    check('city')
+                        .notEmpty()
+                        .withMessage('Enter your city name')
+                        .isString()
+                        .withMessage('Enter correct city name')
+                        .trim(),
+                    check('state')
+                        .notEmpty()
+                        .withMessage('Enter your state name')
+                        .isString()
+                        .withMessage('Enter correct state name')
+                        .trim(),
+                    check('zipcode')
+                        .notEmpty()
+                        .withMessage('Enter your zipcode')
+                        .isNumeric()
+                        .withMessage('Enter correct zipcode')
+                        .trim(),
+                    check('country')
+                        .notEmpty()
+                        .withMessage('Enter your country name')
+                        .isString()
+                        .withMessage('Enter correct country name')
+                        .trim(),
+                    check('phoneNo')
+                        .notEmpty()
+                        .withMessage('Enter your phone number')
+                        .isNumeric()
+                        .withMessage('Enter correct phone number')
+                        .trim(),
+                    check('email')
+                        .notEmpty()
+                        .withMessage('Enter your email')
+                        .isEmail()
+                        .withMessage('Enter correct email')
+                        .trim(),
+                    check('paymenttype')
+                        .notEmpty()
+                        .withMessage('Enter your paymenttype,Either is by Stripe or Paypal')
+                        .isString()
+                        .withMessage('Enter correct paymenttype')
+                        .trim(),
+                    check('subscriptionId')
+                        .notEmpty()
+                        .withMessage('Enter your subscriptionId')
+                        .isString()
+                        .withMessage('Enter correct subscriptionId')
+                        .trim(),
+                    check('subscriptionStatus')
+                        .notEmpty()
+                        .withMessage('Enter your subscriptionStatus, Either it is active or inactive')
+                        .isString()
+                        .withMessage('Enter correct subscriptionStatus ')
+                        .trim()
+                ]
 
         }
 

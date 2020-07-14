@@ -13,10 +13,10 @@ const { validationResult } = require('express-validator')
 
 class Users {
     userpayment(req, res) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            let message = errors.array().map(element => {
-                return element.msg
+        const errorss = validationResult(req);
+        if (!errorss.isEmpty()) {
+            errorss.array().map(element => {
+                return res.status(201).json({ status: false, message: element.msg })
             }).join(',')
         }
         console.log("body", req.body);
@@ -52,16 +52,13 @@ class Users {
                 res.json({ "status": false, "message": "Internal server error.", "data": error })
             }
         })
-
-
-
     }
 
     saveuser(req, res) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            let message = errors.array().map(element => {
-                return element.msg
+        const errorss = validationResult(req);
+        if (!errorss.isEmpty()) {
+         errorss.array().map(element => {
+                return res.status(201).json({ status: false, message: element.msg })
             }).join(',')
         }
         const { fName, lName, addressOne, addressTwo, city, state, zipcode, country, phoneNo, email, paymenttype, subscriptionId, subscriptionStatus } = req.body
@@ -112,10 +109,10 @@ class Users {
     }
 
     paypalpayment(req, res) {
-        const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            let message = errors.array().map(element => {
-                return element.msg
+        const errorss = validationResult(req);
+        if (!errorss.isEmpty()) {
+            errorss.array().map(element => {
+                return res.status(201).json({ status: false, message: element.msg })
             }).join(',')
         }
         const { orderID, billingToken, subscriptionID, facilitatorAccessToken, } = req.body
