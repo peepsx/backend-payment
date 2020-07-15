@@ -129,18 +129,23 @@ class Users {
 
                 Paypalpayment.findOne({subscriptionID:subscriptionId}).then((response) => {
 
-                    console.log("changes here in paypal fall inside2",response);
 
-                    if(response){
+                    
+            let request = new checkoutNodeJssdk.orders.OrdersGetRequest(response.orderID);
+
+
+            payPalClient.client().execute(request).then((respo)=>{
+
+                if(respo.result.status == 'APPROVED'){
+
+                    console.log("do work here")
 
                         Userpayment.findOne({ email: email }).then((resp) => {
 
 
                             if (resp) {
-                                console.log('=====================res', resp)
                                 return res.status(201).json({ status: false, message: "User already subscribed" })
                             } else {
-                                console.log(resp, '=====================res =elsecase', req.body)
                                 let userObject = new Userpayment({
                                     fName: fName,
                                     lName: lName,
@@ -178,13 +183,20 @@ class Users {
                         }).catch((err) => {
                             console.log('=========', err)
                         })
+                    
 
-                    }
-                    else{
+                }
+                else{
 
-                        return res.status(201).json({ status: false, message: "Please Do the payment" })
+                    res.json({ "status": false, "message": "PayPal Payment not Approved" })
 
-                    }
+                }
+
+            }).catch((exc)=>{
+                console.log("exc",exc);
+
+                res.json({ "status": false, "message": "PayPal Payment not valid" })
+            })
 
                 }).catch((exception)=>{
                     console.log("exception in paypal finding in save user",exception);
@@ -246,14 +258,17 @@ class Users {
 
     checkpayments(req,res){
 
-        console.log("cominnng");
+       
+        const {subscriptionID } = req.body
 
-        let request = new checkoutNodeJssdk.orders.OrdersGetRequest("4NR62465YS081623J");
 
-        console.log("request from paypal",request);
+        Paypalpayment.findOne({subscriptionID:subscriptionID}).then((response) => {
 
-        payPalClient.client().execute(request).then((response)=>{
-            console.log("response paypal",response);
+            console.log("changes here in paypal fall inside2",response);
+
+
+        }).catch((exception)=>{
+            console.log("exception",exception);
         })
     }
 
