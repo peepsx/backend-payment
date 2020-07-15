@@ -6,6 +6,12 @@ const Payment = require('../modals/payment')
 const Paypalpayment = require('../modals/paypalpayment')
 const { validationResult } = require('express-validator')
 
+
+const checkoutNodeJssdk = require('@paypal/checkout-server-sdk');
+
+const payPalClient = require('./paypalclient');
+
+
 // const sendgrid = require('@sendgrid/mail');
 // sendgrid.setApiKey(SENDGRID_API_KEY);
 
@@ -236,6 +242,19 @@ class Users {
                 console.log(errors)
             })
         }
+    }
+
+    checkpayments(req,res){
+
+        console.log("cominnng");
+
+        let request = new checkoutNodeJssdk.orders.OrdersGetRequest("4NR62465YS081623J");
+
+        console.log("request from paypal",request);
+
+        payPalClient.client().execute(request).then((response)=>{
+            console.log("response paypal",response);
+        })
     }
 
 }
