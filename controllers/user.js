@@ -178,49 +178,6 @@ class Users {
                 })
                 
             }
-            Userpayment.findOne({ email: email }).then((resp) => {
-                if (resp) {
-                    console.log('=====================res', resp)
-                    res.status(201).json({ status: false, message: "User already exists" })
-                } else {
-                    console.log(resp, '=====================res =elsecase', req.body)
-                    let userObject = new Userpayment({
-                        fName: fName,
-                        lName: lName,
-                        addressOne: addressOne,
-                        addressTwo: addressTwo,
-                        city: city,
-                        state: state,
-                        zipcode: zipcode,
-                        country: country,
-                        phoneNo: phoneNo,
-                        email: email,
-                        paymentType: paymenttype,
-                        subscriptionId: subscriptionId,
-                        subscriptionStatus: subscriptionStatus
-                    });
-                    userObject.save().then(doc => {
-                        if (doc) {
-                            res.json({ status: true, message: "You are member now." })
-                            // construct an email
-                            // const email = {
-                            //     to: 'test@mailslurp.com',
-                            //     from: 'test@mailslurp.com',
-                            //     subject: 'My first email',
-                            //     text: 'Hello world',
-                            // }
-                            // sendgrid.send(email)
-                        } else {
-                            res.json({ status: false, message: "You are not member,Please try again" })
-                        }
-                    }).catch((error) => {
-                        console.log(error)
-                        res.json({ "status": false, "message": "Internal server error.", "data": error })
-                    })
-                }
-            }).catch((err) => {
-                console.log('=========', err)
-            })
         }
 
     }
