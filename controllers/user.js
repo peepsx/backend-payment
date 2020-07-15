@@ -63,7 +63,7 @@ class Users {
 
                     if(response){
 
-                        Userpayment.findOne({ subscriptionId: subscriptionId }).then((resp) => {
+                        Userpayment.findOne({ email: email }).then((resp) => {
                             if (resp) {
                                 console.log('=====================res', resp)
                                 res.status(201).json({ status: false, message: "User already subscribed" })
@@ -120,14 +120,19 @@ class Users {
             if(paymenttype == 'paypal')
             {
 
-                Paypalpayment.findOne({subscriptionId:subscriptionId}).then((response) => {
+
+                Paypalpayment.findOne({subscriptionID:subscriptionId}).then((response) => {
+
+                    console.log("changes here in paypal fall inside2",response);
 
                     if(response){
 
-                        Userpayment.findOne({ subscriptionId: subscriptionId }).then((resp) => {
+                        Userpayment.findOne({ email: email }).then((resp) => {
+
+
                             if (resp) {
                                 console.log('=====================res', resp)
-                                res.status(201).json({ status: false, message: "User already subscribed" })
+                                return res.status(201).json({ status: false, message: "User already subscribed" })
                             } else {
                                 console.log(resp, '=====================res =elsecase', req.body)
                                 let userObject = new Userpayment({
@@ -175,6 +180,8 @@ class Users {
 
                     }
 
+                }).catch((exception)=>{
+                    console.log("exception in paypal finding in save user",exception);
                 })
                 
             }
