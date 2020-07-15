@@ -13,13 +13,6 @@ const { validationResult } = require('express-validator')
 
 class Users {
     userpayment(req, res) {
-        const errorss = validationResult(req);
-        if (!errorss.isEmpty()) {
-            errorss.array().map(element => {
-                return res.status(201).json({ status: false, message: element.msg })
-            }).join(',')
-        }
-        console.log("body", req.body);
         const { name, token } = req.body;
         service.createSubcription(name, token).then(resultData => {
             if (resultData) {
@@ -57,89 +50,230 @@ class Users {
     saveuser(req, res) {
         const errorss = validationResult(req);
         if (!errorss.isEmpty()) {
-         errorss.array().map(element => {
-                return res.status(201).json({ status: false, message: element.msg })
-            }).join(',')
+            console.log("errors on data save",errorss);
+        //  errorss.array().map(element => {
+        //         return res.status(201).json({ status: false, message: element.msg })
+        //     }).join(',')
         }
-        const { fName, lName, addressOne, addressTwo, city, state, zipcode, country, phoneNo, email, paymenttype, subscriptionId, subscriptionStatus } = req.body
-        Userpayment.findOne({ email: email }).then((resp) => {
-            if (resp) {
-                console.log('=====================res', resp)
-                res.status(201).json({ status: false, message: "User already exists" })
-            } else {
-                console.log(resp, '=====================res =elsecase', req.body)
-                let userObject = new Userpayment({
-                    fName: fName,
-                    lName: lName,
-                    addressOne: addressOne,
-                    addressTwo: addressTwo,
-                    city: city,
-                    state: state,
-                    zipcode: zipcode,
-                    country: country,
-                    phoneNo: phoneNo,
-                    email: email,
-                    paymentType: paymenttype,
-                    subscriptionId: subscriptionId,
-                    subscriptionStatus: subscriptionStatus
-                });
-                userObject.save().then(doc => {
-                    if (doc) {
-                        res.json({ status: true, message: "You are member now." })
-                        // construct an email
-                        // const email = {
-                        //     to: 'test@mailslurp.com',
-                        //     from: 'test@mailslurp.com',
-                        //     subject: 'My first email',
-                        //     text: 'Hello world',
-                        // }
-                        // sendgrid.send(email)
-                    } else {
-                        res.json({ status: false, message: "You are not member,Please try again" })
+        else{
+
+            const { fName, lName, addressOne, addressTwo, city, state, zipcode, country, phoneNo, email, paymenttype, subscriptionId, subscriptionStatus } = req.body
+            
+            if(paymenttype == 'Stripe'){
+
+                Payment.findOne({subscriptionId:subscriptionId}).then((response) => {
+
+                    if(response){
+
+                        Userpayment.findOne({ subscriptionId: subscriptionId }).then((resp) => {
+                            if (resp) {
+                                console.log('=====================res', resp)
+                                res.status(201).json({ status: false, message: "User already subscribed" })
+                            } else {
+                                console.log(resp, '=====================res =elsecase', req.body)
+                                let userObject = new Userpayment({
+                                    fName: fName,
+                                    lName: lName,
+                                    addressOne: addressOne,
+                                    addressTwo: addressTwo,
+                                    city: city,
+                                    state: state,
+                                    zipcode: zipcode,
+                                    country: country,
+                                    phoneNo: phoneNo,
+                                    email: email,
+                                    paymentType: paymenttype,
+                                    subscriptionId: subscriptionId,
+                                    subscriptionStatus: subscriptionStatus
+                                });
+                                userObject.save().then(doc => {
+                                 //   if (doc) {
+                                        res.json({ status: true, message: "You are member now." })
+                                        // construct an email
+                                        // const email = {
+                                        //     to: 'test@mailslurp.com',
+                                        //     from: 'test@mailslurp.com',
+                                        //     subject: 'My first email',
+                                        //     text: 'Hello world',
+                                        // }
+                                        // sendgrid.send(email)
+                                    // } else {
+                                    //     res.json({ status: false, message: "You are not member,Please try again" })
+                                    // }
+                                }).catch((error) => {
+                                    console.log(error)
+                                    res.json({ "status": false, "message": "Internal server error.", "data": error })
+                                })
+                            }
+                        }).catch((err) => {
+                            console.log('=========', err)
+                        })
+
                     }
-                }).catch((error) => {
-                    console.log(error)
-                    res.json({ "status": false, "message": "Internal server error.", "data": error })
+                    else{
+
+                        return res.status(201).json({ status: false, message: "Please Do the payment via stripe" })
+
+                    }
+
                 })
+
             }
-        }).catch((err) => {
-            console.log('=========', err)
-        })
+            if(paymenttype == 'paypal')
+            {
+
+                Paypalpayment.findOne({subscriptionId:subscriptionId}).then((response) => {
+
+                    if(response){
+
+                        Userpayment.findOne({ subscriptionId: subscriptionId }).then((resp) => {
+                            if (resp) {
+                                console.log('=====================res', resp)
+                                res.status(201).json({ status: false, message: "User already subscribed" })
+                            } else {
+                                console.log(resp, '=====================res =elsecase', req.body)
+                                let userObject = new Userpayment({
+                                    fName: fName,
+                                    lName: lName,
+                                    addressOne: addressOne,
+                                    addressTwo: addressTwo,
+                                    city: city,
+                                    state: state,
+                                    zipcode: zipcode,
+                                    country: country,
+                                    phoneNo: phoneNo,
+                                    email: email,
+                                    paymentType: paymenttype,
+                                    subscriptionId: subscriptionId,
+                                    subscriptionStatus: subscriptionStatus
+                                });
+                                userObject.save().then(doc => {
+                                   // if (doc) {
+                                        res.json({ status: true, message: "You are member now." })
+                                        // construct an email
+                                        // const email = {
+                                        //     to: 'test@mailslurp.com',
+                                        //     from: 'test@mailslurp.com',
+                                        //     subject: 'My first email',
+                                        //     text: 'Hello world',
+                                        // }
+                                        // sendgrid.send(email)
+                                    // } else {
+                                    //     res.json({ status: false, message: "You are not member,Please try again" })
+                                    // }
+                                }).catch((error) => {
+                                    console.log(error)
+                                    res.json({ "status": false, "message": "Internal server error.", "data": error })
+                                })
+                            }
+                        }).catch((err) => {
+                            console.log('=========', err)
+                        })
+
+                    }
+                    else{
+
+                        return res.status(201).json({ status: false, message: "Please Do the payment via stripe" })
+
+                    }
+
+                })
+                
+            }
+            Userpayment.findOne({ email: email }).then((resp) => {
+                if (resp) {
+                    console.log('=====================res', resp)
+                    res.status(201).json({ status: false, message: "User already exists" })
+                } else {
+                    console.log(resp, '=====================res =elsecase', req.body)
+                    let userObject = new Userpayment({
+                        fName: fName,
+                        lName: lName,
+                        addressOne: addressOne,
+                        addressTwo: addressTwo,
+                        city: city,
+                        state: state,
+                        zipcode: zipcode,
+                        country: country,
+                        phoneNo: phoneNo,
+                        email: email,
+                        paymentType: paymenttype,
+                        subscriptionId: subscriptionId,
+                        subscriptionStatus: subscriptionStatus
+                    });
+                    userObject.save().then(doc => {
+                        if (doc) {
+                            res.json({ status: true, message: "You are member now." })
+                            // construct an email
+                            // const email = {
+                            //     to: 'test@mailslurp.com',
+                            //     from: 'test@mailslurp.com',
+                            //     subject: 'My first email',
+                            //     text: 'Hello world',
+                            // }
+                            // sendgrid.send(email)
+                        } else {
+                            res.json({ status: false, message: "You are not member,Please try again" })
+                        }
+                    }).catch((error) => {
+                        console.log(error)
+                        res.json({ "status": false, "message": "Internal server error.", "data": error })
+                    })
+                }
+            }).catch((err) => {
+                console.log('=========', err)
+            })
+        }
 
     }
 
     paypalpayment(req, res) {
         const errorss = validationResult(req);
         if (!errorss.isEmpty()) {
-            errorss.array().map(element => {
-                return res.status(201).json({ status: false, message: element.msg })
-            }).join(',')
+              return res.status(201).json({ status: false, message: "Please Do the payment via paypal" })
+            
+            // errorss.array().map(element => {
+            // }).join(',')
         }
+        else{
+
+        
         const { orderID, billingToken, subscriptionID, facilitatorAccessToken, } = req.body
-        Paypalpayment.find()
+        Paypalpayment.findOne({subscriptionID:subscriptionID})
             .then((docs) => {
-                let paypalpaymentObj = new Paypalpayment({
-                    orderID: orderID,
-                    billingToken: billingToken,
-                    subscriptionID: subscriptionID,
-                    facilitatorAccessToken: facilitatorAccessToken
-                });
-                paypalpaymentObj.save()
-                    .then((docsResult) => {
-                        if (docsResult) {
-                            res.json({ status: true, message: 'Data saved successfully' })
-                        } else {
-                            res.json({ status: false, message: 'Data not saved,try again' })
-                        }
-                    })
-                    .catch((errs) => {
-                        console.log(errs)
-                    })
+                if(docs){
+
+                    return res.json({ status: false, message: 'Already paypal subscriptionID exist' })
+                  
+                }
+                else{
+
+                    let paypalpaymentObj = new Paypalpayment({
+                        orderID: orderID,
+                        billingToken: billingToken,
+                        subscriptionID: subscriptionID,
+                        facilitatorAccessToken: facilitatorAccessToken
+                    });
+                    paypalpaymentObj.save()
+                        .then((docsResult) => {
+                            if (docsResult) {
+                                return res.json({ status: true, message: 'Data saved successfully' })
+                            } else {
+                                return res.json({ status: false, message: 'Data not saved,try again' })
+                            }
+                        })
+                        .catch((errs) => {
+                            console.log(errs)
+                        })
+
+                }
+
 
             })
             .catch((errors) => {
                 console.log(errors)
             })
+        }
     }
 
 }
