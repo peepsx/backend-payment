@@ -256,21 +256,6 @@ class Users {
         }
     }
 
-    checkpayments(req,res){
-
-       
-        const {subscriptionID } = req.body
-
-
-        Paypalpayment.findOne({subscriptionID:subscriptionID}).then((response) => {
-
-            console.log("changes here in paypal fall inside2",response);
-
-
-        }).catch((exception)=>{
-            console.log("exception",exception);
-        })
-    }
 
 }
 
