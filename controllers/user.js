@@ -16,7 +16,6 @@ class Users {
         const { name, token } = req.body;
         service.createSubcription(name, token).then(resultData => {
             if (resultData) {
-                console.log("payment result data ============ >>>> ", resultData.id, resultData.created, '======', resultData)
                 Payment.find().then((response) => {
                     let paymentObject = new Payment({
                         name: name,
@@ -25,7 +24,6 @@ class Users {
                         created: resultData.created
                     })
                     paymentObject.save().then((respData) => {
-                        console.log("saved");
                         res.json({ status: true, message: "Payment successful.", data: resultData })
 
                     }).catch((error) => {

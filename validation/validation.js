@@ -23,18 +23,6 @@ class Validation {
                         .isString()
                         .withMessage('Enter correct stripe token')
                         .trim(),
-                    check('subscriptionId')
-                        .notEmpty()
-                        .withMessage('Enter subscriptionId ')
-                        .isString()
-                        .withMessage('Enter correct subscriptionId')
-                        .trim(),
-                    check('created')
-                        .notEmpty()
-                        .withMessage('Enter created')
-                        .trim(),
-
-
                 ]
 
             case "paypalPayment":
