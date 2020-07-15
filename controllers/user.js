@@ -110,7 +110,7 @@ class Users {
                     }
                     else{
 
-                        return res.status(201).json({ status: false, message: "Please Do the payment via stripe" })
+                        return res.status(201).json({ status: false, message: "Please Do the payment" })
 
                     }
 
@@ -171,7 +171,7 @@ class Users {
                     }
                     else{
 
-                        return res.status(201).json({ status: false, message: "Please Do the payment via stripe" })
+                        return res.status(201).json({ status: false, message: "Please Do the payment" })
 
                     }
 
