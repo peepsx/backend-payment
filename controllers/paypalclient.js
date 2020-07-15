@@ -23,9 +23,7 @@ function client() {
  *
  */
 function environment() {
-    let clientId = 'Aes7-mZ9lsMi3h-m6lZ-eIQFBaUoF_hpHW1fF8bEZ5a59vZvzeTg75ZZc78g5h5igwkSABHfvlDQk8VQ';
-    let clientSecret = 'EDeQvB2EijlTZgGurYreDBJLalaasryGlSVSJgUrnHG03SS4YYsOa8Y6ujnrmefLaJrhqvHXT9jqjr6c';
-
+    
     return new checkoutNodeJssdk.core.LiveEnvironment(
         clientId, clientSecret
     );
