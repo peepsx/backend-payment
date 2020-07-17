@@ -8,7 +8,7 @@ const validation =require('../validation/validation')
 router.post('/payment',validation.validate('stripePayment'),controller.userpayment );
 router.post('/saveuser',validation.validate('userDetails'),controller.saveuser);
 router.post('/paypalpayment',validation.validate('paypalPayment'),controller.paypalpayment);
-
+router.post('/sendemail',controller.sendmail)
 
 
 module.exports = router;

@@ -12,8 +12,8 @@ const checkoutNodeJssdk = require('@paypal/checkout-server-sdk');
 // const payPalClient = require('../paypalclient');
 
 
-// const sendgrid = require('@sendgrid/mail');
-// sendgrid.setApiKey(SENDGRID_API_KEY);
+const sendgrid = require('@sendgrid/mail');
+sendgrid.setApiKey(config.API_Key_ID);
 
 
 
@@ -255,6 +255,29 @@ class Users {
                     console.log(errors)
                 })
         }
+    }
+
+
+    sendmail(req,res){
+
+        const email = {
+            to: 'mku6818@gmail.com.com',
+            from: 'kumarujjawal786@gmail.com',
+            subject: 'My first email',
+            text: 'Hello world',
+        }
+        sendgrid.send(email).then((docss)=>{
+            if(docss){
+                console.log('sendgridsuccess',docss)
+                res.json({status:true,message:"mail sent",data:docss})
+            }else{
+                console.log('sendgrid else')
+                res.json({status:false,message:"mail sent"})
+            }
+        }).catch((errr)=>{
+            console.log('sendgrid catch block',errr)
+        })
+
     }
 
 
