@@ -7,6 +7,7 @@ const Mongoose = require("mongoose");
 var cors = require('cors')
 
 
+var indexRouter = require('./routes/index');
 var routes = require('./routes/routes');
 
 var app = express();
@@ -29,6 +30,8 @@ app.use(function(req, res, next) {
   next();
 });
 
+
+app.use('/', indexRouter);
 app.use('/users', routes);
 
 
