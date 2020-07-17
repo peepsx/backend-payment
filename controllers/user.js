@@ -63,6 +63,7 @@ class Users {
 
             const { fName, lName, addressOne, addressTwo, city, state, zipcode, country, phoneNo, email, paymenttype, subscriptionId, subscriptionStatus } = req.body
 
+            console.log("payment type",paymenttype);
             if (paymenttype == 'Stripe') {
 
                 Payment.findOne({ subscriptionId: subscriptionId }).then((response) => {
