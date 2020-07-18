@@ -11,7 +11,7 @@ const ejs = require("ejs");
 
 const checkoutNodeJssdk = require('@paypal/checkout-server-sdk');
 
-// const payPalClient = require('../paypalclient');
+const payPalClient = require('../paypalclient');
 
 
 const sendgrid = require('@sendgrid/mail');
