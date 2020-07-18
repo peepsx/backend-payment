@@ -92,7 +92,8 @@ class Users {
                                 });
                                 let object = {};
                                 object.email = email;
-                                object.subject = "Welcome to Peeps"
+                                object.subject = "Welcome to Peeps",
+                                object.fName = fName
                                 service.sendmail(object).then((results) => {
                                     console.log("response from sendgrid", results)
                                     if (results) {
@@ -160,7 +161,8 @@ class Users {
                                     });
                                     let object = {};
                                     object.email = email;
-                                    object.subject = "Welcome to Peeps"
+                                    object.subject = "Welcome to Peeps",
+                                    object.fName = fName
                                     service.sendmail(object).then((result) => {
                                         console.log("response from paypal", result)
                                         if (result) {

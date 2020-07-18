@@ -62,7 +62,9 @@ class Service {
 
         return new promise((resolve, reject) => {
 
-            ejs.renderFile(__dirname + "/views/emailtemplate.ejs", function (err, datas) {
+            ejs.renderFile(__dirname + "/views/emailtemplate.ejs" ,{
+                user_firstname: data.fName,
+              }, function (err, datas) {
                 if (err) {
                     console.log(err);
                 } else {
