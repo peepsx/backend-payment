@@ -92,12 +92,12 @@ class Users {
                                 });
                                 let object = {};
                                 object.email = email;
-                                object.subject = "Welcome"
+                                object.subject = "Welcome to Peeps"
                                 service.sendmail(object).then((results) => {
                                     console.log("response from sendgrid", results)
                                     if (results) {
                                         userObject.save().then(doc => {
-                                            res.json({ status: true, message: "You are member now." })
+                                            res.json({ status: true, message: "Congratulations, You are peeps member now. Kindly Please check your Email" })
                                         }).catch((error) => {
                                             console.log(error)
                                             res.json({ "status": false, "message": "Internal server error.", "data": error })
@@ -135,7 +135,6 @@ class Users {
 
                         if (respo.result.status == 'APPROVED') {
 
-                            console.log("do work here")
 
                             Userpayment.findOne({ email: email }).then((resp) => {
 
@@ -161,12 +160,12 @@ class Users {
                                     });
                                     let object = {};
                                     object.email = email;
-                                    object.subject = "Welcome"
+                                    object.subject = "Welcome to Peeps"
                                     service.sendmail(object).then((result) => {
                                         console.log("response from paypal", result)
                                         if (result) {
                                             userObject.save().then(doc => {
-                                                res.json({ status: true, message: "You are member now." })
+                                                res.json({ status: true, message: "Congratulations, You are peeps member now. Kindly Please check your Email" })
                                             }).catch((error) => {
                                                 console.log(error)
                                                 res.json({ "status": false, "message": "Internal server error.", "data": error })
