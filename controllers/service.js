@@ -60,27 +60,32 @@ class Service {
 
     sendmail(data) {
 
-        ejs.renderFile(__dirname + "/views/emailtemplate.ejs", function (err, datas) {
-            if (err) {
-                console.log(err);
-            } else {
-                const email = {
-                    to: data.email,
-                    from: 'noreply@peepsx.com',
-                    subject: data.subject,
-                    html: datas
-                }
-                // console.log("html data ======================>", mainOptions.html);
+        return new promise((resolve, reject) => {
 
-                sendgrid.send(email, function (err, info) {
-                    if (err) {
-                        console.log('====>>>>>>>>>>', err)
-                    } else {
-                        console.log('success',info)
+            ejs.renderFile(__dirname + "/views/emailtemplate.ejs", function (err, datas) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    const email = {
+                        to: data.email,
+                        from: 'noreply@peepsx.com',
+                        subject: data.subject,
+                        html: datas
                     }
-                });
-            }
-        });
+                    // console.log("html data ======================>", mainOptions.html);
+
+                    sendgrid.send(email, function (err, info) {
+                        if (err) {
+                            console.log('====>>>>>>>>>>', err)
+                            resolve(false)
+                        } else {
+                            console.log('success', info)
+                            resolve(info)
+                        }
+                    });
+                }
+            });
+        })
 
 
 

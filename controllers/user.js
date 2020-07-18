@@ -69,16 +69,12 @@ class Users {
             if (paymenttype == 'Stripe') {
 
                 Payment.findOne({ subscriptionId: subscriptionId }).then((response) => {
-
                     if (response) {
-
                         Userpayment.findOne({ email: email }).then((resp) => {
-                            console.log("insidee");
                             if (resp) {
-                                console.log('=====================res', resp)
                                 res.status(201).json({ status: false, message: "User already subscribed" })
                             } else {
-                                console.log('=====================res =elsecase', req.body)
+                                console.log('inside findone elsecase', req.body)
                                 let userObject = new Userpayment({
                                     fName: fName,
                                     lName: lName,
@@ -96,18 +92,16 @@ class Users {
                                 });
                                 let object = {};
                                 object.email = email;
-                                object.subject = "welcome ,mail.title"
-                                service.sendmail(object).then((result) => {
-                                    console.log("response from nodemailer", result)
-                                    if (result) {
+                                object.subject = "Welcome"
+                                service.sendmail(object).then((results) => {
+                                    console.log("response from sendgrid", results)
+                                    if (results) {
                                         userObject.save().then(doc => {
                                             res.json({ status: true, message: "You are member now." })
                                         }).catch((error) => {
                                             console.log(error)
                                             res.json({ "status": false, "message": "Internal server error.", "data": error })
                                         })
-                                    } else {
-                                        res.json({ status: false, message: "mail not sent." })
                                     }
                                 }).catch((e) => {
                                     console.log("response from exception", e)
@@ -149,6 +143,7 @@ class Users {
                                 if (resp) {
                                     return res.status(201).json({ status: false, message: "User already subscribed" })
                                 } else {
+                                    console.log('inside findone elsecase', req.body)
                                     let userObject = new Userpayment({
                                         fName: fName,
                                         lName: lName,
@@ -164,27 +159,21 @@ class Users {
                                         subscriptionId: subscriptionId,
                                         subscriptionStatus: subscriptionStatus
                                     });
-                                    userObject.save().then(doc => {
-                                        // if (doc) {
-                                        let object = {};
-                                        object.email = email;
-                                        object.subject = "welcome ,mail.title"
-                                        service.sendmail(object)
-                                        res.json({ status: true, message: "You are member now." })
-                                        // construct an email
-                                        // const email = {
-                                        //     to: 'test@mailslurp.com',
-                                        //     from: 'test@mailslurp.com',
-                                        //     subject: 'My first email',
-                                        //     text: 'Hello world',
-                                        // }
-                                        // sendgrid.send(email)
-                                        // } else {
-                                        //     res.json({ status: false, message: "You are not member,Please try again" })
-                                        // }
-                                    }).catch((error) => {
-                                        console.log(error)
-                                        res.json({ "status": false, "message": "Internal server error.", "data": error })
+                                    let object = {};
+                                    object.email = email;
+                                    object.subject = "Welcome"
+                                    service.sendmail(object).then((result) => {
+                                        console.log("response from paypal", result)
+                                        if (result) {
+                                            userObject.save().then(doc => {
+                                                res.json({ status: true, message: "You are member now." })
+                                            }).catch((error) => {
+                                                console.log(error)
+                                                res.json({ "status": false, "message": "Internal server error.", "data": error })
+                                            })
+                                        }
+                                    }).catch((e) => {
+                                        console.log("response from exception", e)
                                     })
                                 }
                             }).catch((err) => {
