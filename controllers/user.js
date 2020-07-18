@@ -5,6 +5,8 @@ const service = require('./service');
 const Payment = require('../modals/payment')
 const Paypalpayment = require('../modals/paypalpayment')
 const { validationResult } = require('express-validator')
+const ejs = require("ejs");
+
 
 
 const checkoutNodeJssdk = require('@paypal/checkout-server-sdk');
@@ -63,7 +65,7 @@ class Users {
 
             const { fName, lName, addressOne, addressTwo, city, state, zipcode, country, phoneNo, email, paymenttype, subscriptionId, subscriptionStatus } = req.body
 
-            console.log("payment type",paymenttype);
+            console.log("payment type", paymenttype);
             if (paymenttype == 'Stripe') {
 
                 Payment.findOne({ subscriptionId: subscriptionId }).then((response) => {
@@ -71,11 +73,12 @@ class Users {
                     if (response) {
 
                         Userpayment.findOne({ email: email }).then((resp) => {
+                            console.log("insidee");
                             if (resp) {
                                 console.log('=====================res', resp)
                                 res.status(201).json({ status: false, message: "User already subscribed" })
                             } else {
-                                console.log(resp, '=====================res =elsecase', req.body)
+                                console.log('=====================res =elsecase', req.body)
                                 let userObject = new Userpayment({
                                     fName: fName,
                                     lName: lName,
@@ -91,20 +94,23 @@ class Users {
                                     subscriptionId: subscriptionId,
                                     subscriptionStatus: subscriptionStatus
                                 });
-                                userObject.save().then(doc => {
-                                    //   if (doc) {
-                                    let object = {};
-                                    object.email = email;
-                                    object.subject = "welcome ,mail.title"
-                                    service.sendmail(object).then((result)=>{
-                                        console.log("response from nodemailer",result)
-                                    }).catch((e)=>{
-                                        console.log("response from exception",e)
-                                    })
-                                    res.json({ status: true, message: "You are member now." })
-                                }).catch((error) => {
-                                    console.log(error)
-                                    res.json({ "status": false, "message": "Internal server error.", "data": error })
+                                let object = {};
+                                object.email = email;
+                                object.subject = "welcome ,mail.title"
+                                service.sendmail(object).then((result) => {
+                                    console.log("response from nodemailer", result)
+                                    if (result) {
+                                        userObject.save().then(doc => {
+                                            res.json({ status: true, message: "You are member now." })
+                                        }).catch((error) => {
+                                            console.log(error)
+                                            res.json({ "status": false, "message": "Internal server error.", "data": error })
+                                        })
+                                    } else {
+                                        res.json({ status: false, message: "mail not sent." })
+                                    }
+                                }).catch((e) => {
+                                    console.log("response from exception", e)
                                 })
                             }
                         }).catch((err) => {
@@ -258,27 +264,57 @@ class Users {
     }
 
 
-    sendmail(req,res){
+    // sendmail(req, res) {
 
-        const email = {
-            to: 'mku6818@gmail.com.com',
-            from: 'kumarujjawal786@gmail.com',
-            subject: 'My first email',
-            text: 'Hello world',
-        }
-        sendgrid.send(email).then((docss)=>{
-            if(docss){
-                console.log('sendgridsuccess',docss)
-                res.json({status:true,message:"mail sent",data:docss})
-            }else{
-                console.log('sendgrid else')
-                res.json({status:false,message:"mail sent"})
-            }
-        }).catch((errr)=>{
-            console.log('sendgrid catch block',errr)
-        })
 
-    }
+        // ejs.renderFile(__dirname + "/views/emailtemplate.ejs", function (err, data) {
+        //     if (err) {
+        //         console.log(err);
+        //     } else {
+        //         const email = {
+        //             to: 'mku6818@gmail.com',
+        //             from: 'noreply@peepsx.com',
+        //             subject: 'My first email',
+        //             // text: 'Hello world',
+        //             html: data
+        //         }
+        //         // console.log("html data ======================>", mainOptions.html);
+
+        //         sendgrid.send(email, function (err, info) {
+        //             if (err) {
+        //                 console.log('====>>>>>>>>>>', err)
+        //                 res.json({
+        //                     msg: 'fail'
+        //                 })
+        //             } else {
+        //                 console.log('success')
+        //                 res.json({
+        //                     msg: 'success'
+        //                 })
+        //             }
+        //         });
+        //     }
+        // });
+
+        // const email = {
+        //     to: 'mku6818@gmail.com',
+        //     from: 'noreply@peepsx.com',
+        //     subject: 'My first email',
+        //     text: 'Hello world',
+        // }
+        // sendgrid.send(email).then((docss)=>{
+        //     if(docss){
+        //         console.log('sendgridsuccess',docss)
+        //         res.json({status:true,message:"mail sent",data:docss})
+        //     }else{
+        //         console.log('sendgrid else')
+        //         res.json({status:false,message:"mail sent"})
+        //     }
+        // }).catch((errr)=>{
+        //     console.log('sendgrid catch block',errr)
+        // })
+
+    // }
 
 
 }
