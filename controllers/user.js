@@ -4,6 +4,7 @@ const stripe = require('stripe')(config.Secret_Key)
 const service = require('./service');
 const Payment = require('../modals/payment')
 const Paypalpayment = require('../modals/paypalpayment')
+const Cardonetimepayment = require('../modals/onetimepayment')
 const { validationResult } = require('express-validator')
 const ejs = require("ejs");
 
@@ -93,7 +94,7 @@ class Users {
                                 let object = {};
                                 object.email = email;
                                 object.subject = "Welcome to Peeps",
-                                object.fName = fName
+                                    object.fName = fName
                                 service.sendmail(object).then((results) => {
                                     console.log("response from sendgrid", results)
                                     if (results) {
@@ -162,7 +163,7 @@ class Users {
                                     let object = {};
                                     object.email = email;
                                     object.subject = "Welcome to Peeps",
-                                    object.fName = fName
+                                        object.fName = fName
                                     service.sendmail(object).then((result) => {
                                         console.log("response from paypal", result)
                                         if (result) {
@@ -253,56 +254,92 @@ class Users {
         }
     }
 
+    cardonetimepayment(req, res) {
+        const { amount, token } = req.body
+        service.onetimepayment(amount, token).then((resultdata) => {
+            console.log('cardpayment', resultdata, resultdata.id, resultdata.amount, resultdata.balance_transaction, resultdata.paid, resultdata.status)
+            if (resultdata) {
+                Cardonetimepayment.find().then((resp) => {
+                    let cardOneTimePaymentObj = new Cardonetimepayment({
+                        amount: amount,
+                        subscriptionType: 'onetime',
+                        subscriptionId: resultdata.id,
+                        transectionId: resultdata.balance_transaction,
+                        paid: resultdata.paid,
+                        paymentStatus: resultdata.status
+                    })
+                    cardOneTimePaymentObj.save().then((respdata) => {
+                        if (respdata) {
+                            res.json({ status: true, message: "Payment successful.", data: resultdata })
+                        } else {
+                            res.json({ status: false, message: "Data not saved." })
+                        }
+                    }).catch(errss => {
+                        console.log(errss)
+                    })
+                }).catch(ers => {
+                    console.log(ers)
+                })
+            } else {
+                res.json({ status: false, message: "Payment failed,Try again." })
+            }
+        }).catch((err) => {
+            console.log('catch block onetimepayment', err)
+            res.json({ status: false, message: "Payment failed,Try again.", error: err })
+        })
+
+    }
+
 
     // sendmail(req, res) {
 
 
-        // ejs.renderFile(__dirname + "/views/emailtemplate.ejs", function (err, data) {
-        //     if (err) {
-        //         console.log(err);
-        //     } else {
-        //         const email = {
-        //             to: 'mku6818@gmail.com',
-        //             from: 'noreply@peepsx.com',
-        //             subject: 'My first email',
-        //             // text: 'Hello world',
-        //             html: data
-        //         }
-        //         // console.log("html data ======================>", mainOptions.html);
+    // ejs.renderFile(__dirname + "/views/emailtemplate.ejs", function (err, data) {
+    //     if (err) {
+    //         console.log(err);
+    //     } else {
+    //         const email = {
+    //             to: 'mku6818@gmail.com',
+    //             from: 'noreply@peepsx.com',
+    //             subject: 'My first email',
+    //             // text: 'Hello world',
+    //             html: data
+    //         }
+    //         // console.log("html data ======================>", mainOptions.html);
 
-        //         sendgrid.send(email, function (err, info) {
-        //             if (err) {
-        //                 console.log('====>>>>>>>>>>', err)
-        //                 res.json({
-        //                     msg: 'fail'
-        //                 })
-        //             } else {
-        //                 console.log('success')
-        //                 res.json({
-        //                     msg: 'success'
-        //                 })
-        //             }
-        //         });
-        //     }
-        // });
+    //         sendgrid.send(email, function (err, info) {
+    //             if (err) {
+    //                 console.log('====>>>>>>>>>>', err)
+    //                 res.json({
+    //                     msg: 'fail'
+    //                 })
+    //             } else {
+    //                 console.log('success')
+    //                 res.json({
+    //                     msg: 'success'
+    //                 })
+    //             }
+    //         });
+    //     }
+    // });
 
-        // const email = {
-        //     to: 'mku6818@gmail.com',
-        //     from: 'noreply@peepsx.com',
-        //     subject: 'My first email',
-        //     text: 'Hello world',
-        // }
-        // sendgrid.send(email).then((docss)=>{
-        //     if(docss){
-        //         console.log('sendgridsuccess',docss)
-        //         res.json({status:true,message:"mail sent",data:docss})
-        //     }else{
-        //         console.log('sendgrid else')
-        //         res.json({status:false,message:"mail sent"})
-        //     }
-        // }).catch((errr)=>{
-        //     console.log('sendgrid catch block',errr)
-        // })
+    // const email = {
+    //     to: 'mku6818@gmail.com',
+    //     from: 'noreply@peepsx.com',
+    //     subject: 'My first email',
+    //     text: 'Hello world',
+    // }
+    // sendgrid.send(email).then((docss)=>{
+    //     if(docss){
+    //         console.log('sendgridsuccess',docss)
+    //         res.json({status:true,message:"mail sent",data:docss})
+    //     }else{
+    //         console.log('sendgrid else')
+    //         res.json({status:false,message:"mail sent"})
+    //     }
+    // }).catch((errr)=>{
+    //     console.log('sendgrid catch block',errr)
+    // })
 
     // }
 

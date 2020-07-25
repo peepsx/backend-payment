@@ -58,6 +58,25 @@ class Service {
         })
     }
 
+    onetimepayment(amount,token){
+        console.log('onetimepayment',amount,token)
+        var chargingamount = amount * 100
+        return new promise((resolve,reject)=>{
+            stripe.charges.create(
+                {
+                  amount: chargingamount,
+                  currency: 'usd',
+                  source:token,
+                  description: 'Donation amount for peeps.',
+                },
+                function(err, charge) {
+                    charge ? resolve(charge) : reject(err);
+                }
+              );
+        })
+
+    }
+
     sendmail(data) {
 
         return new promise((resolve, reject) => {

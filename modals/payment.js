@@ -12,6 +12,11 @@ const paymentSchema = new Schema({
         required: true,
         trim: true,
     },
+    // amount: {
+    //     type: Number,
+    //     required:true,
+    //     trim: true
+    // },
     subscriptionId: {
         type: String,
         required: true,
