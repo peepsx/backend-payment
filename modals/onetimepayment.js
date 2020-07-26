@@ -7,11 +7,6 @@ const oneTimePaymentSchema = new Schema({
         required: true,
         trim: true
     },
-    subscriptionType: {
-        type: String,
-        required: true,
-        trim: true
-    },
     subscriptionId: {
         type: String,
         required: true,
@@ -19,7 +14,7 @@ const oneTimePaymentSchema = new Schema({
     },
     transectionId: {
         type: String,
-        required:true,
+        required: true,
         trim: true
     },
     paid: {
@@ -28,6 +23,51 @@ const oneTimePaymentSchema = new Schema({
     },
     paymentStatus: {
         type: String,
+        trim: true
+    },
+    fname: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    lname: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    email: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    addressOne: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    addressTwo: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    city: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    state: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    zipcode: {
+        type: Number,
+        required: true,
+        trim: true
+    },
+    country: {
+        type: String,
+        required: true,
         trim: true
     },
     createdAt: {

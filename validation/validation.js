@@ -6,7 +6,7 @@ class Validation {
 
 
     validate(params) {
-        console.log('params=====>>>>>>>>',params)
+        console.log('params=====>>>>>>>>', params)
         switch (params) {
 
             case "stripePayment":
@@ -134,6 +134,90 @@ class Validation {
                         .withMessage('Enter correct subscriptionStatus ')
                         .trim()
                 ]
+
+            case "cardonetimepayment":
+                return [
+                    check('amount')
+                        .notEmpty()
+                        .withMessage('Enter your donation amount')
+                        .isNumeric()
+                        .withMessage('Enter Valid donation amount')
+                        .trim(),
+                    check('subscriptionId')
+                        .notEmpty()
+                        .withMessage('Enter your subscriptionId')
+                        .isString()
+                        .withMessage('Enter valid subscriptionId')
+                        .trim(),
+                    check('transectionId')
+                        .notEmpty()
+                        .withMessage('Enter your transectionId')
+                        .isString()
+                        .withMessage('Enter valid transectionId'),
+                    check('paid')
+                        .notEmpty()
+                        .withMessage('Enter paid status'),
+                    check('paymentStatus')
+                        .notEmpty()
+                        .withMessage('Enter payment status'),
+                    check('fName')
+                        .notEmpty()
+                        .withMessage('Enter your first name')
+                        .isString()
+                        .withMessage('Enter valid first name')
+                        .trim(),
+                    check('lName')
+                        .notEmpty()
+                        .withMessage('Enter your last name')
+                        .isString()
+                        .withMessage('Enter valid last name')
+                        .trim(),
+                    check('email')
+                        .notEmpty()
+                        .withMessage('Enter your email')
+                        .isEmail()
+                        .withMessage('Enter valid email')
+                        .trim(),
+                    check('addressOne')
+                        .notEmpty()
+                        .withMessage('Enter your first address')
+                        .isString()
+                        .withMessage('Enter valid first address')
+                        .trim(),
+                    check('addressTwo')
+                        .notEmpty()
+                        .withMessage('Enter your second address')
+                        .isString()
+                        .withMessage('Enter valid second address')
+                        .trim(),
+                    check('city')
+                        .notEmpty()
+                        .withMessage('Enter your city name')
+                        .isString()
+                        .withMessage('Enter valid city name')
+                        .trim(),
+                    check('state')
+                        .notEmpty()
+                        .withMessage('Enter your state name')
+                        .isString()
+                        .withMessage('Enter valid state name')
+                        .trim(),
+                    check('zipcode')
+                        .notEmpty()
+                        .withMessage('Enter your zipcode')
+                        .isNumeric()
+                        .withMessage('Enter valid zipcode')
+                        .trim(),
+                    check('country')
+                        .notEmpty()
+                        .withMessage('Enter your country name')
+                        .isString()
+                        .withMessage('Enter valid country name')
+                        .trim(),
+
+
+                ]
+
 
         }
 

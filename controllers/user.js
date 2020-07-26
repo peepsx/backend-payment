@@ -255,39 +255,53 @@ class Users {
     }
 
     cardonetimepayment(req, res) {
-        const { amount, token } = req.body
-        service.onetimepayment(amount, token).then((resultdata) => {
-            console.log('cardpayment', resultdata, resultdata.id, resultdata.amount, resultdata.balance_transaction, resultdata.paid, resultdata.status)
-            if (resultdata) {
-                Cardonetimepayment.find().then((resp) => {
-                    let cardOneTimePaymentObj = new Cardonetimepayment({
-                        amount: amount,
-                        subscriptionType: 'onetime',
-                        subscriptionId: resultdata.id,
-                        transectionId: resultdata.balance_transaction,
-                        paid: resultdata.paid,
-                        paymentStatus: resultdata.status
-                    })
-                    cardOneTimePaymentObj.save().then((respdata) => {
-                        if (respdata) {
-                            res.json({ status: true, message: "Payment successful.", data: resultdata })
-                        } else {
-                            res.json({ status: false, message: "Data not saved." })
-                        }
-                    }).catch(errss => {
-                        console.log(errss)
-                    })
-                }).catch(ers => {
-                    console.log(ers)
-                })
-            } else {
-                res.json({ status: false, message: "Payment failed,Try again." })
-            }
-        }).catch((err) => {
-            console.log('catch block onetimepayment', err)
-            res.json({ status: false, message: "Payment failed,Try again.", error: err })
-        })
 
+        const errors = validationResult(req);
+        if (!errorss.isEmpty()) {
+            return res.status(201).json({ status: false, message: "Validation Error", Error: errors })
+        } else {
+
+            const { amount, token, fname, lname, email, addressOne, addressTwo, city, state, zipcode, country } = req.body
+            service.onetimepayment(amount, token).then((resultdata) => {
+                console.log('cardpayment', resultdata, resultdata.id, resultdata.amount, resultdata.balance_transaction, resultdata.paid, resultdata.status)
+                if (resultdata) {
+                    Cardonetimepayment.find().then((resp) => {
+                        let cardOneTimePaymentObj = new Cardonetimepayment({
+                            amount: amount,
+                            subscriptionId: resultdata.id,
+                            transectionId: resultdata.balance_transaction,
+                            paid: resultdata.paid,
+                            paymentStatus: resultdata.status,
+                            fname: fname,
+                            lname: lname,
+                            email: email,
+                            addressOne: addressOne,
+                            addressTwo: addressTwo,
+                            city: city,
+                            state: state,
+                            zipcode: zipcode,
+                            country: country
+                        })
+                        cardOneTimePaymentObj.save().then((respdata) => {
+                            if (respdata) {
+                                res.json({ status: true, message: "Payment successful.", data: resultdata })
+                            } else {
+                                res.json({ status: false, message: "Data not saved." })
+                            }
+                        }).catch(errss => {
+                            console.log(errss)
+                        })
+                    }).catch(ers => {
+                        console.log(ers)
+                    })
+                } else {
+                    res.json({ status: false, message: "Payment failed,Try again." })
+                }
+            }).catch((err) => {
+                console.log('catch block onetimepayment', err)
+                res.json({ status: false, message: "Payment failed,Try again.", error: err })
+            })
+        }
     }
 
 
