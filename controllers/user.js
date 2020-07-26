@@ -5,6 +5,7 @@ const service = require('./service');
 const Payment = require('../modals/payment')
 const Paypalpayment = require('../modals/paypalpayment')
 const Cardonetimepayment = require('../modals/onetimepayment')
+const Paypalonetimepayment = require('../modals/paypalonetimepayment')
 const { validationResult } = require('express-validator')
 const ejs = require("ejs");
 
@@ -256,53 +257,95 @@ class Users {
 
     cardonetimepayment(req, res) {
 
-        const errors = validationResult(req);
-        if (!errorss.isEmpty()) {
-            return res.status(201).json({ status: false, message: "Validation Error", Error: errors })
-        } else {
+        // const errors = validationResult(req);
+        // if (!errorss.isEmpty()) {
+        //     console.log('error======validation',errors)
+        //     return res.status(201).json({ status: false, message: "Validation Error", Error: errors })
+        // } else {
 
-            const { amount, token, fname, lname, email, addressOne, addressTwo, city, state, zipcode, country } = req.body
-            service.onetimepayment(amount, token).then((resultdata) => {
-                console.log('cardpayment', resultdata, resultdata.id, resultdata.amount, resultdata.balance_transaction, resultdata.paid, resultdata.status)
-                if (resultdata) {
-                    Cardonetimepayment.find().then((resp) => {
-                        let cardOneTimePaymentObj = new Cardonetimepayment({
-                            amount: amount,
-                            subscriptionId: resultdata.id,
-                            transectionId: resultdata.balance_transaction,
-                            paid: resultdata.paid,
-                            paymentStatus: resultdata.status,
-                            fname: fname,
-                            lname: lname,
-                            email: email,
-                            addressOne: addressOne,
-                            addressTwo: addressTwo,
-                            city: city,
-                            state: state,
-                            zipcode: zipcode,
-                            country: country
-                        })
-                        cardOneTimePaymentObj.save().then((respdata) => {
-                            if (respdata) {
-                                res.json({ status: true, message: "Payment successful.", data: resultdata })
-                            } else {
-                                res.json({ status: false, message: "Data not saved." })
-                            }
-                        }).catch(errss => {
-                            console.log(errss)
-                        })
-                    }).catch(ers => {
-                        console.log(ers)
+        const { amount, token, fname, lname, email, addressOne, addressTwo, city, state, zipcode, country } = req.body
+        console.log('req.body', req.body)
+        service.onetimepayment(amount, token).then((resultdata) => {
+            console.log('cardpayment', resultdata.id, resultdata.amount, resultdata.balance_transaction, resultdata.paid, resultdata.status)
+            if (resultdata) {
+                Cardonetimepayment.find().then((resp) => {
+                    let cardOneTimePaymentObj = new Cardonetimepayment({
+                        amount: amount,
+                        subscriptionId: resultdata.id,
+                        transectionId: resultdata.balance_transaction,
+                        paid: resultdata.paid,
+                        paymentStatus: resultdata.status,
+                        fname: fname,
+                        lname: lname,
+                        email: email,
+                        addressOne: addressOne,
+                        addressTwo: addressTwo,
+                        city: city,
+                        state: state,
+                        zipcode: zipcode,
+                        country: country
                     })
-                } else {
-                    res.json({ status: false, message: "Payment failed,Try again." })
-                }
-            }).catch((err) => {
-                console.log('catch block onetimepayment', err)
-                res.json({ status: false, message: "Payment failed,Try again.", error: err })
-            })
-        }
+                    cardOneTimePaymentObj.save().then((respdata) => {
+                        if (respdata) {
+                            res.json({ status: true, message: "Payment successful.", data: resultdata })
+                        } else {
+                            res.json({ status: false, message: "Data not saved." })
+                        }
+                    }).catch(errss => {
+                        console.log(errss)
+                    })
+                }).catch(ers => {
+                    console.log(ers)
+                })
+            } else {
+                res.json({ status: false, message: "Payment failed,Try again." })
+            }
+        }).catch((err) => {
+            console.log('catch block onetimepayment', err)
+            res.json({ status: false, message: "Payment failed,Try again.", error: err })
+        })
+        // }
     }
+
+    paypalonetimepayment(req, res) {
+        const { amount, transectionId, paymentStatus, fname, lname, email, addressOne, addressTwo, city, state, zipcode, country } = req.body
+        Paypalonetimepayment.findOne({ transectionId: transectionId }).then((resps) => {
+            if (resps) {
+                res.json({ status: false, message: "TransectionId already used,Try again." })
+            } else {
+                let paypalOneTimePaymentObj = new Paypalonetimepayment({
+                    amount: amount,
+                    transectionId: transectionId,
+                    paymentStatus: paymentStatus,
+                    fname: fname,
+                    lname: lname,
+                    email: email,
+                    addressOne: addressOne,
+                    addressTwo: addressTwo,
+                    city: city,
+                    state: state,
+                    zipcode: zipcode,
+                    country: country
+                })
+                paypalOneTimePaymentObj.save().then((docsres) => {
+                    if (docsres) {
+                        res.json({ status: true, message: "Payment Successfull" })
+                    } else {
+                        res.json({ status: false, message: "Payment failed" })
+                    }
+
+                }).catch((errobj) => {
+                    console.log('paypalonetimesaveuser====catchblock', errobj)
+                })
+            }
+        }).catch((errorses) => {
+            console.log('error', errorses)
+        })
+
+
+    }
+
+
 
 
     // sendmail(req, res) {

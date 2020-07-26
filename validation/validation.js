@@ -160,13 +160,13 @@ class Validation {
                     check('paymentStatus')
                         .notEmpty()
                         .withMessage('Enter payment status'),
-                    check('fName')
+                    check('fname')
                         .notEmpty()
                         .withMessage('Enter your first name')
                         .isString()
                         .withMessage('Enter valid first name')
                         .trim(),
-                    check('lName')
+                    check('lname')
                         .notEmpty()
                         .withMessage('Enter your last name')
                         .isString()
