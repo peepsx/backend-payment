@@ -9,6 +9,7 @@ router.post('/payment',validation.validate('stripePayment'),controller.userpayme
 router.post('/saveuser',validation.validate('userDetails'),controller.saveuser);
 router.post('/paypalpayment',validation.validate('paypalPayment'),controller.paypalpayment);
 router.post('/onetimepayment',validation.validate('cardonetimepayment'),controller.cardonetimepayment)
+router.post('/paypalonetimepayment',controller.paypalonetimepayment)
 // router.post('/sendemail',controller.sendmail)
 
 
