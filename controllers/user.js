@@ -309,38 +309,57 @@ class Users {
 
     paypalonetimepayment(req, res) {
         const { amount, transectionId, paymentStatus, fname, lname, email, addressOne, addressTwo, city, state, zipcode, country } = req.body
-        Paypalonetimepayment.findOne({ transectionId: transectionId }).then((resps) => {
-            if (resps) {
-                res.json({ status: false, message: "TransectionId already used,Try again." })
-            } else {
-                let paypalOneTimePaymentObj = new Paypalonetimepayment({
-                    amount: amount,
-                    transectionId: transectionId,
-                    paymentStatus: paymentStatus,
-                    fname: fname,
-                    lname: lname,
-                    email: email,
-                    addressOne: addressOne,
-                    addressTwo: addressTwo,
-                    city: city,
-                    state: state,
-                    zipcode: zipcode,
-                    country: country
-                })
-                paypalOneTimePaymentObj.save().then((docsres) => {
-                    if (docsres) {
-                        res.json({ status: true, message: "Payment Successfull" })
-                    } else {
-                        res.json({ status: false, message: "Payment failed" })
-                    }
 
-                }).catch((errobj) => {
-                    console.log('paypalonetimesaveuser====catchblock', errobj)
-                })
-            }
-        }).catch((errorses) => {
-            console.log('error', errorses)
-        })
+        let request = new checkoutNodeJssdk.orders.OrdersGetRequest(transectionId);
+
+
+                    payPalClient.client().execute(request).then((respo) => {
+
+
+                        if (respo.result.status == 'COMPLETED') {
+
+
+                            Paypalonetimepayment.findOne({ transectionId: transectionId }).then((resps) => {
+                                if (resps) {
+                                    res.json({ status: false, message: "TransectionId already used,Try again." })
+                                } else {
+                                    let paypalOneTimePaymentObj = new Paypalonetimepayment({
+                                        amount: amount,
+                                        transectionId: transectionId,
+                                        paymentStatus: paymentStatus,
+                                        fname: fname,
+                                        lname: lname,
+                                        email: email,
+                                        addressOne: addressOne,
+                                        addressTwo: addressTwo,
+                                        city: city,
+                                        state: state,
+                                        zipcode: zipcode,
+                                        country: country
+                                    })
+                                    paypalOneTimePaymentObj.save().then((docsres) => {
+                                        if (docsres) {
+                                            res.json({ status: true, message: "Data saved" })
+                                        } else {
+                                            res.json({ status: false, message: "Data not saved" })
+                                        }
+                    
+                                    }).catch((errobj) => {
+                                        console.log('paypalonetimesaveuser====catchblock', errobj)
+                                    })
+                                }
+                            }).catch((errorses) => {
+                                console.log('error', errorses)
+                            })
+
+
+
+                        }
+                    }).catch((e)=>{
+                        console.log("exception",e)
+                    })
+
+      
 
 
     }
