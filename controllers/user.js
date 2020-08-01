@@ -23,7 +23,8 @@ sendgrid.setApiKey(config.API_Key_ID);
 
 class Users {
     userpayment(req, res) {
-        const { name, token } = req.body;
+        const { name, token ,amount} = req.body;
+        console.log('req.body stripe subscription',req.body)
         service.createSubcription(name, token).then(resultData => {
             if (resultData) {
                 Payment.find().then((response) => {
@@ -31,6 +32,7 @@ class Users {
                         name: name,
                         token: token,
                         subscriptionId: resultData.id,
+                        amount:5,
                         created: resultData.created
                     })
                     paymentObject.save().then((respData) => {
@@ -65,7 +67,7 @@ class Users {
         }
         else {
 
-            const { fName, lName, addressOne, addressTwo, city, state, zipcode, country, phoneNo, email, paymenttype, subscriptionId, subscriptionStatus } = req.body
+            const { fName, lName, addressOne, addressTwo, city, state, zipcode, country, phoneNo, email, paymenttype, subscriptionId, subscriptionStatus,amount } = req.body
 
             console.log("payment type", paymenttype);
             if (paymenttype == 'Stripe') {
@@ -231,6 +233,7 @@ class Users {
                             orderID: orderID,
                             billingToken: billingToken,
                             subscriptionID: subscriptionID,
+                            amount:5,
                             facilitatorAccessToken: facilitatorAccessToken
                         });
                         paypalpaymentObj.save()
@@ -361,6 +364,10 @@ class Users {
 
       
 
+
+    }
+
+    totalamount(req,res){
 
     }
 
