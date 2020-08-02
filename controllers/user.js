@@ -368,6 +368,7 @@ class Users {
     }
 
     async totalamount(req,res){
+        try{
         let one_t_payment = await Cardonetimepayment.aggregate([
             {$group: {
                 _id: null,
@@ -396,6 +397,12 @@ class Users {
         ])
         let total_amount = one_t_payment[0].one_t_payment + pay_one_payment[0].pay_one_payment + pay_pal_payment[0].pay_pal_payment + payment[0].payment;
         res.status(200).json({success: true, total: total_amount});
+    }
+    catch(exception){
+        res.status(200).json({success: false, total: 0});
+
+
+    }
     }
 
 
