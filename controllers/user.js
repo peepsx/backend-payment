@@ -367,8 +367,35 @@ class Users {
 
     }
 
-    totalamount(req,res){
+    async totalamount(req,res){
+        let one_t_payment = await Cardonetimepayment.aggregate([
+            {$group: {
+                _id: null,
+                "one_t_payment": {$sum: "$amount"},
+            }}
+        ])
+        let payment = await Payment.aggregate([
+            {$group: {
+                _id: null,
+                "payment": {$sum: "$amount"},
+            }}
+        ])
 
+        let pay_pal_payment = await Paypalpayment.aggregate([
+            {$group: {
+                _id: null,
+                "pay_pal_payment": {$sum: "$amount"},
+            }}
+        ])
+
+        let pay_one_payment = await Paypalonetimepayment.aggregate([
+            {$group: {
+                _id: null,
+                "pay_one_payment": {$sum: "$amount"},
+            }}
+        ])
+        let total_amount = one_t_payment[0].one_t_payment + pay_one_payment[0].pay_one_payment + pay_pal_payment[0].pay_pal_payment + payment[0].payment;
+        res.status(200).json({success: true, total: total_amount});
     }
 
 
