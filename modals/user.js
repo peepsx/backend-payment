@@ -37,11 +37,11 @@ const userSchema = new Schema({
         required: true,
         trim: true
     },
-    country: {
-        type: String,
-        required: true,
-        trim: true
-    },
+    // country: {
+    //     type: String,
+    //     required: true,
+    //     trim: true
+    // },
     phoneNo: {
         type: Number,
         required: true,

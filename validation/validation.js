@@ -97,12 +97,12 @@ class Validation {
                         .isNumeric()
                         .withMessage('Enter correct zipcode')
                         .trim(),
-                    check('country')
-                        .notEmpty()
-                        .withMessage('Enter your country name')
-                        .isString()
-                        .withMessage('Enter correct country name')
-                        .trim(),
+                    // check('country')
+                    //     .notEmpty()
+                    //     .withMessage('Enter your country name')
+                    //     .isString()
+                    //     .withMessage('Enter correct country name')
+                    //     .trim(),
                     check('phoneNo')
                         .notEmpty()
                         .withMessage('Enter your phone number')

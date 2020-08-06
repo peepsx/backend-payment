@@ -23,8 +23,8 @@ sendgrid.setApiKey(config.API_Key_ID);
 
 class Users {
     userpayment(req, res) {
-        const { name, token ,amount} = req.body;
-        console.log('req.body stripe subscription',req.body)
+        const { name, token, amount } = req.body;
+        console.log('req.body stripe subscription', req.body)
         service.createSubcription(name, token).then(resultData => {
             if (resultData) {
                 Payment.find().then((response) => {
@@ -32,7 +32,7 @@ class Users {
                         name: name,
                         token: token,
                         subscriptionId: resultData.id,
-                        amount:5,
+                        amount: 5,
                         created: resultData.created
                     })
                     paymentObject.save().then((respData) => {
@@ -67,7 +67,7 @@ class Users {
         }
         else {
 
-            const { fName, lName, addressOne, addressTwo, city, state, zipcode, country, phoneNo, email, paymenttype, subscriptionId, subscriptionStatus,amount } = req.body
+            const { fName, lName, addressOne, addressTwo, city, state, zipcode, phoneNo, email, paymenttype, subscriptionId, subscriptionStatus, amount } = req.body
 
             console.log("payment type", paymenttype);
             if (paymenttype == 'Stripe') {
@@ -87,7 +87,7 @@ class Users {
                                     city: city,
                                     state: state,
                                     zipcode: zipcode,
-                                    country: country,
+                                    // country: country,
                                     phoneNo: phoneNo,
                                     email: email,
                                     paymentType: paymenttype,
@@ -156,7 +156,7 @@ class Users {
                                         city: city,
                                         state: state,
                                         zipcode: zipcode,
-                                        country: country,
+                                        // country: country,
                                         phoneNo: phoneNo,
                                         email: email,
                                         paymentType: paymenttype,
@@ -165,8 +165,8 @@ class Users {
                                     });
                                     let object = {};
                                     object.email = email;
-                                    object.subject = "Welcome to Peeps",
-                                        object.fName = fName
+                                    object.subject = "Welcome To The Patriots Club",
+                                    object.fName = fName
                                     service.sendmail(object).then((result) => {
                                         console.log("response from paypal", result)
                                         if (result) {
@@ -233,7 +233,7 @@ class Users {
                             orderID: orderID,
                             billingToken: billingToken,
                             subscriptionID: subscriptionID,
-                            amount:5,
+                            amount: 5,
                             facilitatorAccessToken: facilitatorAccessToken
                         });
                         paypalpaymentObj.save()
@@ -316,93 +316,101 @@ class Users {
         let request = new checkoutNodeJssdk.orders.OrdersGetRequest(transectionId);
 
 
-                    payPalClient.client().execute(request).then((respo) => {
+        payPalClient.client().execute(request).then((respo) => {
 
 
-                        if (respo.result.status == 'COMPLETED') {
+            if (respo.result.status == 'COMPLETED') {
 
 
-                            Paypalonetimepayment.findOne({ transectionId: transectionId }).then((resps) => {
-                                if (resps) {
-                                    res.json({ status: false, message: "TransectionId already used,Try again." })
-                                } else {
-                                    let paypalOneTimePaymentObj = new Paypalonetimepayment({
-                                        amount: amount,
-                                        transectionId: transectionId,
-                                        paymentStatus: paymentStatus,
-                                        fname: fname,
-                                        lname: lname,
-                                        email: email,
-                                        addressOne: addressOne,
-                                        addressTwo: addressTwo,
-                                        city: city,
-                                        state: state,
-                                        zipcode: zipcode,
-                                        country: country
-                                    })
-                                    paypalOneTimePaymentObj.save().then((docsres) => {
-                                        if (docsres) {
-                                            res.json({ status: true, message: "Data saved" })
-                                        } else {
-                                            res.json({ status: false, message: "Data not saved" })
-                                        }
-                    
-                                    }).catch((errobj) => {
-                                        console.log('paypalonetimesaveuser====catchblock', errobj)
-                                    })
-                                }
-                            }).catch((errorses) => {
-                                console.log('error', errorses)
-                            })
+                Paypalonetimepayment.findOne({ transectionId: transectionId }).then((resps) => {
+                    if (resps) {
+                        res.json({ status: false, message: "TransectionId already used,Try again." })
+                    } else {
+                        let paypalOneTimePaymentObj = new Paypalonetimepayment({
+                            amount: amount,
+                            transectionId: transectionId,
+                            paymentStatus: paymentStatus,
+                            fname: fname,
+                            lname: lname,
+                            email: email,
+                            addressOne: addressOne,
+                            addressTwo: addressTwo,
+                            city: city,
+                            state: state,
+                            zipcode: zipcode,
+                            country: country
+                        })
+                        paypalOneTimePaymentObj.save().then((docsres) => {
+                            if (docsres) {
+                                res.json({ status: true, message: "Data saved" })
+                            } else {
+                                res.json({ status: false, message: "Data not saved" })
+                            }
+
+                        }).catch((errobj) => {
+                            console.log('paypalonetimesaveuser====catchblock', errobj)
+                        })
+                    }
+                }).catch((errorses) => {
+                    console.log('error', errorses)
+                })
 
 
 
-                        }
-                    }).catch((e)=>{
-                        console.log("exception",e)
-                    })
-
-      
+            }
+        }).catch((e) => {
+            console.log("exception", e)
+        })
 
 
-    }
-
-    async totalamount(req,res){
-        try{
-        let one_t_payment = await Cardonetimepayment.aggregate([
-            {$group: {
-                _id: null,
-                "one_t_payment": {$sum: "$amount"},
-            }}
-        ])
-        let payment = await Payment.aggregate([
-            {$group: {
-                _id: null,
-                "payment": {$sum: "$amount"},
-            }}
-        ])
-
-        let pay_pal_payment = await Paypalpayment.aggregate([
-            {$group: {
-                _id: null,
-                "pay_pal_payment": {$sum: "$amount"},
-            }}
-        ])
-
-        let pay_one_payment = await Paypalonetimepayment.aggregate([
-            {$group: {
-                _id: null,
-                "pay_one_payment": {$sum: "$amount"},
-            }}
-        ])
-        let total_amount = one_t_payment[0].one_t_payment + pay_one_payment[0].pay_one_payment + pay_pal_payment[0].pay_pal_payment + payment[0].payment;
-        res.status(200).json({success: true, total: total_amount});
-    }
-    catch(exception){
-        res.status(200).json({success: false, total: 0});
 
 
     }
+
+    async totalamount(req, res) {
+        try {
+            let one_t_payment = await Cardonetimepayment.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        "one_t_payment": { $sum: "$amount" },
+                    }
+                }
+            ])
+            let payment = await Payment.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        "payment": { $sum: "$amount" },
+                    }
+                }
+            ])
+
+            let pay_pal_payment = await Paypalpayment.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        "pay_pal_payment": { $sum: "$amount" },
+                    }
+                }
+            ])
+
+            let pay_one_payment = await Paypalonetimepayment.aggregate([
+                {
+                    $group: {
+                        _id: null,
+                        "pay_one_payment": { $sum: "$amount" },
+                    }
+                }
+            ])
+            let total_amount = one_t_payment[0].one_t_payment + pay_one_payment[0].pay_one_payment + pay_pal_payment[0].pay_pal_payment + payment[0].payment;
+            res.status(200).json({ success: true, total: total_amount });
+        }
+        catch (exception) {
+            res.status(200).json({ success: false, total: 0 });
+
+
+        }
     }
 
 
