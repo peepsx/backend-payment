@@ -219,7 +219,7 @@ class Users {
         else {
 
 
-            const { orderID, billingToken, subscriptionID, facilitatorAccessToken, } = req.body
+            const { orderID, billingToken, subscriptionID, facilitatorAccessToken, amount} = req.body
             Paypalpayment.findOne({ subscriptionID: subscriptionID })
                 .then((docs) => {
                     if (docs) {
@@ -233,7 +233,7 @@ class Users {
                             orderID: orderID,
                             billingToken: billingToken,
                             subscriptionID: subscriptionID,
-                            amount: 5,
+                            amount: amount,
                             facilitatorAccessToken: facilitatorAccessToken
                         });
                         paypalpaymentObj.save()
