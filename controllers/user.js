@@ -413,9 +413,6 @@ class Users {
         }
     }
 
-
-
-
     // sendmail(req, res) {
 
 
