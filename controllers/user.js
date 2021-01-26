@@ -166,7 +166,7 @@ class Users {
                                     let object = {};
                                     object.email = email;
                                     object.subject = "Welcome To The Patriots Club",
-                                    object.fName = fName
+                                        object.fName = fName
                                     service.sendmail(object).then((result) => {
                                         console.log("response from paypal", result)
                                         if (result) {
@@ -219,7 +219,7 @@ class Users {
         else {
 
 
-            const { orderID, billingToken, subscriptionID, facilitatorAccessToken, amount} = req.body
+            const { orderID, billingToken, subscriptionID, facilitatorAccessToken, amount } = req.body
             Paypalpayment.findOne({ subscriptionID: subscriptionID })
                 .then((docs) => {
                     if (docs) {
@@ -412,6 +412,22 @@ class Users {
 
         }
     }
+
+    getdetails(req, res) {
+        console.log('====', req.body)
+        Userpayment.find().then((resp) => {
+            if (resp) {
+                res.json({ status: true, message: "Data fetched", data: resp })
+            }
+        }).catch((errors) => {
+            res.json({ status: false, message: "Something went wrong ,data fetched", data: errors })
+        })
+    }
+
+
+
+
+    
 
     // sendmail(req, res) {
 
