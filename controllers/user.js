@@ -61,6 +61,8 @@ class Users {
         const errorss = validationResult(req);
         if (!errorss.isEmpty()) {
             console.log("errors on data save", errorss);
+            res.json({ status: false, message: "Invalid Data" })
+
             //  errorss.array().map(element => {
             //         return res.status(201).json({ status: false, message: element.msg })
             //     }).join(',')
@@ -69,69 +71,15 @@ class Users {
 
             const { fName, lName, addressOne, addressTwo, city, state, zipcode, phoneNo, email, paymenttype, subscriptionId, subscriptionStatus, amount } = req.body
 
-            console.log("payment type", paymenttype);
-            if (paymenttype == 'Stripe') {
+            console.log("payment type",fName, lName, addressOne, addressTwo, city, state, zipcode, phoneNo, email, paymenttype, subscriptionId, subscriptionStatus);
 
-                Payment.findOne({ subscriptionId: subscriptionId }).then((response) => {
-                    if (response) {
-                        Userpayment.findOne({ email: email }).then((resp) => {
-                            if (resp) {
-                                res.status(201).json({ status: false, message: "User already subscribed" })
-                            } else {
-                                console.log('inside findone elsecase', req.body)
-                                let userObject = new Userpayment({
-                                    fName: fName,
-                                    lName: lName,
-                                    addressOne: addressOne,
-                                    addressTwo: addressTwo,
-                                    city: city,
-                                    state: state,
-                                    zipcode: zipcode,
-                                    // country: country,
-                                    phoneNo: phoneNo,
-                                    email: email,
-                                    paymentType: paymenttype,
-                                    subscriptionId: subscriptionId,
-                                    subscriptionStatus: subscriptionStatus
-                                });
-                                let object = {};
-                                object.email = email;
-                                object.subject = "Welcome to Peeps",
-                                    object.fName = fName
-                                service.sendmail(object).then((results) => {
-                                    console.log("response from sendgrid", results)
-                                    if (results) {
-                                        userObject.save().then(doc => {
-                                            res.json({ status: true, message: "Congratulations, You are peeps member now. Kindly Please check your Email" })
-                                        }).catch((error) => {
-                                            console.log(error)
-                                            res.json({ "status": false, "message": "Internal server error.", "data": error })
-                                        })
-                                    }
-                                }).catch((e) => {
-                                    console.log("response from exception", e)
-                                })
-                            }
-                        }).catch((err) => {
-                            console.log('=========', err)
-                        })
-
-                    }
-                    else {
-
-                        return res.status(201).json({ status: false, message: "Please Do the payment" })
-
-                    }
-
-                })
-
-            }
             if (paymenttype == 'paypal') {
 
 
                 Paypalpayment.findOne({ subscriptionID: subscriptionId }).then((response) => {
 
 
+                    console.log("pay");
 
                     let request = new checkoutNodeJssdk.orders.OrdersGetRequest(response.orderID);
 
@@ -143,10 +91,12 @@ class Users {
 
                             Userpayment.findOne({ email: email }).then((resp) => {
 
+                                if(resp)
+                                {
+                                    res.json({ status: false, message: "This Email is already Used, try with other email" })
 
-                                if (resp) {
-                                    return res.status(201).json({ status: false, message: "User already subscribed" })
-                                } else {
+                                }
+                                else{
                                     console.log('inside findone elsecase', req.body)
                                     let userObject = new Userpayment({
                                         fName: fName,
@@ -168,28 +118,31 @@ class Users {
                                     object.subject = "Welcome To The Patriots Club",
                                         object.fName = fName
                                     service.sendmail(object).then((result) => {
-                                        console.log("response from paypal", result)
+                                        console.log("response from mailsendgrid ", result)
                                         if (result) {
                                             userObject.save().then(doc => {
                                                 res.json({ status: true, message: "Congratulations, You are peeps member now. Kindly Please check your Email" })
                                             }).catch((error) => {
                                                 console.log(error)
-                                                res.json({ "status": false, "message": "Internal server error.", "data": error })
+                                                res.json({ status: false, message: "Internal server error.", "data": error })
                                             })
                                         }
                                     }).catch((e) => {
                                         console.log("response from exception", e)
                                     })
+
                                 }
+
+                                
                             }).catch((err) => {
-                                console.log('=========', err)
+                                console.log('========= catch', err)
                             })
 
 
                         }
                         else {
 
-                            res.json({ "status": false, "message": "PayPal Payment not Approved" })
+                           return res.json({ "status": false, "message": "PayPal Payment not Approved" })
 
                         }
 
@@ -201,6 +154,7 @@ class Users {
 
                 }).catch((exception) => {
                     console.log("exception in paypal finding in save user", exception);
+                    res.json({ "status": false, "message": "PayPal SubscriptionID is invalid " })
                 })
 
             }
@@ -220,6 +174,8 @@ class Users {
 
 
             const { orderID, billingToken, subscriptionID, facilitatorAccessToken, amount } = req.body
+
+            console.log("from data",orderID, billingToken, subscriptionID, facilitatorAccessToken, amount)
             Paypalpayment.findOne({ subscriptionID: subscriptionID })
                 .then((docs) => {
                     if (docs) {
