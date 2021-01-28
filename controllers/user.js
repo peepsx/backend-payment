@@ -1,4 +1,6 @@
 const Userpayment = require('../modals/user')
+const userdatadetail = require('../modals/userdatadetail')
+
 const config = require('../config')
 const stripe = require('stripe')(config.Secret_Key)
 const service = require('./service');
@@ -120,6 +122,15 @@ class Users {
                                     service.sendmail(object).then((result) => {
                                         console.log("response from mailsendgrid ", result)
                                         if (result) {
+
+                                            var pass = ("" + Math.random()).substring(2, 8)
+
+                                            let usercred = new userdatadetail({
+                                                email: email,
+                                                password : pass
+                                            });
+                                            usercred.save();
+
                                             userObject.save().then(doc => {
                                                 res.json({ status: true, message: "Congratulations, You are peeps member now. Kindly Please check your Email" })
                                             }).catch((error) => {
